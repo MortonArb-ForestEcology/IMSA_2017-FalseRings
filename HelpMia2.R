@@ -1,4 +1,5 @@
 
+#dat = read.table("more fun/MetStation_2017_EW_2017-09-27.csv",header=TRUE)
 dat = read.csv(file="more fun/Dendroband_trees.csv", header=TRUE, sep=",")
 
 #select variables need to analyze

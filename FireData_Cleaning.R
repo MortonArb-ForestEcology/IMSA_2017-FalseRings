@@ -82,7 +82,7 @@ dat.fire[!is.na(dat.fire$NOTES),"Burn_Year"] <- 2013
 # dat.fire[!is.na(dat.fire$NOTES),]
 names(dat.fire)[1] <- "CORNER"
 summary(dat.fire)
-write.csv(dat.fr.final, file.path(path.google, "IMSA_2017_Rollinson/Data_Fire_Clean.csv"), row.names=F)
+write.csv(dat.fire, file.path(path.google, "IMSA_2017_Rollinson/Data_Fire_Clean.csv"), row.names=F)
 # ---------------
 
 

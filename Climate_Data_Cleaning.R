@@ -11,8 +11,8 @@ for(i in 1:length(files.met)){
 
 	dat.tmp <- data.frame(year   = yr.now, 
 	                      doy    = ncdf4::ncvar_get(ncT, "time"),
-	                      tmin   = ncdf4::ncvar_get(ncT, "minimum_air_temperature"),
-	                      tmax   = ncdf4::ncvar_get(ncT, "maximum_air_temperature"),
+	                      tmin   = ncdf4::ncvar_get(ncT, "minimum_air_temperature")-273.15,
+	                      tmax   = ncdf4::ncvar_get(ncT, "maximum_air_temperature")-273.15,
 	                      prcp   = ncdf4::ncvar_get(ncT, "precipitation_flux"),
 	                      swe    = ncdf4::ncvar_get(ncT, "liquid_water_content_of_surface_snow"),
 	                      swdown = ncdf4::ncvar_get(ncT, "surface_downwelling_shortwave_flux_in_air"),
@@ -20,7 +20,7 @@ for(i in 1:length(files.met)){
 	                      vp     = ncdf4::ncvar_get(ncT, "water_vapor_partial_pressure_in_air"))
 	                      
 	# Calculating growing degree-days
-	gdd <- apply(dat.tmp[,c("tmax", "tmin")], 1, mean) - 273.15 - 5	                      
+	gdd <- apply(dat.tmp[,c("tmax", "tmin")], 1, mean) - 5	                      
 	gdd[gdd<0] <- 0
 	
 	for(i in 2:length(gdd)){
@@ -33,7 +33,7 @@ for(i in 1:length(files.met)){
 	
 	setTxtProgressBar(pb, i)
 }
-
+summary(dat.all)
 write.csv(dat.all, "/Volumes/GoogleDrive/My Drive/East Woods/IMSA_2017_Rollinson/ClimateData_Daymet.csv", row.names=F)
 
 dat.stack <- stack(dat.all[,vars])
@@ -51,8 +51,8 @@ summary(met.agg)
 library(ggplot2)
 ggplot(data=met.agg[,]) +
 	facet_wrap(~ind, scales="free_y") +
-	geom_ribbon(aes(x=doy, ymin=mean-sd, ymax=mean+sd), alpha=0.5) +
-	# geom_ribbon(aes(x=doy, ymin=ci.lwr, ymax=ci.upr), alpha=0.5) +
+	# geom_ribbon(aes(x=doy, ymin=mean-sd, ymax=mean+sd), alpha=0.5) +
+	geom_ribbon(aes(x=doy, ymin=ci.lwr, ymax=ci.upr), alpha=0.5) +
 	geom_line(aes(x=doy, y=mean))
 	
 set.seed(231); yrs.rand <- sample(1980:2017, 5)	
@@ -60,5 +60,6 @@ ggplot(data=met.agg[met.agg$doy<185 & met.agg$ind=="GDD5", ]) +
 	geom_ribbon(aes(x=doy, ymin=ci.lwr, ymax=ci.upr), alpha=0.5) +
 	geom_line(aes(x=doy, y=mean), size=2) +
 	geom_line(data= dat.stack[dat.stack $doy<185 & dat.stack$ind=="GDD5" & dat.stack$year %in% yrs.rand, ], aes(x=doy, y=values, group=year), size=0.5) +
-	geom_line(data= dat.stack[dat.stack $doy<185 & dat.stack$ind=="GDD5" & dat.stack$year==1995, ], aes(x=doy, y=values, group=year), size=0.75, color="red")
+	geom_line(data= dat.stack[dat.stack $doy<185 & dat.stack$ind=="GDD5" & dat.stack$year==1995, ], aes(x=doy, y=values, group=year), size=0.75, color="red") +
+	geom_line(data= dat.stack[dat.stack $doy<185 & dat.stack$ind=="GDD5" & dat.stack$year==2017, ], aes(x=doy, y=values, group=year), size=0.75, color="dodgerblue3")
 	

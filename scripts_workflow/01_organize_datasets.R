@@ -5,6 +5,10 @@
 # 1. Read in tree data & Jessica's Data
 # 2. Subset to just the trees Jessica needs
 # 3. Read in the tree ring measurements for Jessica's trees
+#    1. scan folder for files available to work with; I use dir() and grep() family of funcitons a lot
+#    2. select those for the cores we want to work with
+#    3. use read.rwl function in dplR to read in earlywood & latewood files for those trees
+
 # ------ Maybe split into new script? ------ 
 # 4. Calculate diameter for each EW/LW boundary point
 # 5. Calculate cumulative area for each landmark (EW/LW boundary point)

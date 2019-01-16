@@ -11,15 +11,16 @@
 # 6. Calculate area of each latewood/earlywood portion (EWA, LWA)
 
 
-
-library(dplyr); library(ggplot2); library(stringr); library(googlesheets)
+# library(dplR) # Tree ring software
+# library(ggplot2); library(stringr); library(googlesheets)
 
 #Reading in Jessica's data
-xylem <- gs_title("Xylem_Data")
-xylem.df <- data.frame(gs_read(xylem, ws="raw data"))
+xylem <- googlesheets::gs_title("Xylem_Data")
+xylem.df <- data.frame(googlesheets::gs_read(xylem, ws="raw data"))
 xylem.df$Species.of.Tree <- as.factor(xylem.df$Species.of.Tree)
 xylem.df$Tree.ID <- as.factor(xylem.df$Tree.ID)
 xylem.df$Vessel <- as.factor(xylem.df$Vessel)
+xylem.df$Tag <- as.factor(substr(xylem.df$Tree.ID, 1, 4)) # Making something that corresponds to columns in the plot survey data
 summary(xylem.df)
 
 #Reading in Tree Data

@@ -9,3 +9,5 @@
 # 4. Calculate diameter for each EW/LW boundary point
 # 5. Calculate cumulative area for each landmark (EW/LW boundary point)
 # 6. Calculate area of each latewood/earlywood portion (EWA, LWA)
+
+# Libraries needed: dplR, stingr, ggplot2 (for graphing)

@@ -14,15 +14,15 @@
 
 library(dplyr); library(ggplot2); library(stringr); library(googlesheets)
 
-setwd("C:/Users/BZumwalde/Desktop/IMSA_2017-FalseRings/data_raw")
-
 #Reading in Jessica's data
 xylem <- gs_title("Xylem_Data")
 xylem.df <- data.frame(gs_read(xylem, ws="raw data"))
+xylem.df$Species.of.Tree <- as.factor(xylem.df$Species.of.Tree)
+xylem.df$Tree.ID <- as.factor(xylem.df$Tree.ID)
+xylem.df$Vessel <- as.factor(xylem.df$Vessel)
 summary(xylem.df)
-#Still need to set as some columns as numbers i.e. vessel
 
 #Reading in Tree Data
-plotsurvey <- read.csv("./TreeSurveyData/Tree_PlotSurvey_2017 - raw data.csv")
+plotsurvey <- read.csv("../data_raw/TreeSurveyData/Tree_PlotSurvey_2017 - raw data.csv", na.strings="")
 #survey.add <- read.csv("./TreeSurveyData/Trees_Survey_Additional_URF_2017 - raw_data.csv")
-
+summary(plotsurvey)

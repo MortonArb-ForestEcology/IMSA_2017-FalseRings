@@ -36,6 +36,9 @@ xylem.df2 <- merge(xylem.df, plotsurvey, by = "Tag", match = "all")
 
 
 # 3. Read in the tree ring measurements for Jessica's trees
+path.rw <- "../data_raw/RawRingWidths/"
+rwl.all <- dir(path.rw, ".rwl")
+rwl.all[1:10]
 
-rwl
+rw.test <- dplR::read.rwl(file.path(path.rw, rwl.all[1]))
 

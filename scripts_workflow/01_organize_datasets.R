@@ -11,8 +11,8 @@
 # 6. Calculate area of each latewood/earlywood portion (EWA, LWA)
 
 
-# library(dplR) # Tree ring software
-# library(ggplot2); library(stringr); library(googlesheets)
+ library(dplR) # Tree ring software
+ library(ggplot2); library(stringr); library(googlesheets)
 
 # 1.1 Reading in Jessica's data
 xylem <- googlesheets::gs_title("Xylem_Data")
@@ -40,5 +40,11 @@ path.rw <- "../data_raw/RawRingWidths/"
 rwl.all <- dir(path.rw, ".rwl")
 rwl.all[1:10]
 
-rw.test <- dplR::read.rwl(file.path(path.rw, rwl.all[1]))
+rw.test <- list()
+for (k in 1:length(rwl.all)){
+  rw.test[[k]] <- dplR::read.rwl(file.path(path.rw, rwl.all[k]))
+}
+str(rw.test[[1]])
 
+
+rw.df <- data.frame(matrix(unlist(rw.test), nrow=210, byrow=F)) #unlisting and putting into 1 df

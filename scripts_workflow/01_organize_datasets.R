@@ -71,4 +71,4 @@ for(CORE in unique(xylem.df$Core.ID)){
 }
 summary(dat.all)
 
-write.csv(dat.all, "TreeRingData_XylemCores.csv", row.names=F)
+write.csv(dat.all, "../data_raw/TreeRingData_XylemCores.csv", row.names=F)

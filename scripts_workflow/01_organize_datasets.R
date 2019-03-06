@@ -26,7 +26,7 @@ xylem.df$Species.of.Tree <- as.factor(xylem.df$Species.of.Tree)
 xylem.df$Tree.ID <- as.factor(xylem.df$Tree.ID)
 xylem.df$Vessel <- as.factor(xylem.df$Vessel)
 xylem.df$Tag <- as.factor(substr(xylem.df$Tree.ID, 1, 4)) # Making something that corresponds to columns in the 
-plot survey data
+# plot survey data
 summary(xylem.df)
 
 # Doing some additional data cleaning
@@ -34,6 +34,8 @@ unique(xylem.df$Tree.ID) # --> note that some have spaces, some don't
 xylem.df$Tree.ID <- sub(" ", "", xylem.df$Tree.ID) # Get rid of the spaces by replacing them with nothing
 xylem.df$core <- substr(xylem.df$Tree.ID, 5,5) # Most trees will ahve 2 cores
 xylem.df$Core.ID <- paste(xylem.df$Tag, xylem.df$core, sep="-") # Trying to match things to 
+
+summary(xylem.df)
 
 # 1.2 Reading in Tree Data
 plotsurvey <- read.csv("../data_raw/TreeSurveyData/Tree_PlotSurvey_2017 - raw data.csv", na.strings="")

@@ -17,6 +17,9 @@ xylem.df$Tree.ID <- sub(" ", "", xylem.df$Tree.ID) # Get rid of the spaces by re
 xylem.df$core <- substr(xylem.df$Tree.ID, 5,5) # Most trees will ahve 2 cores
 xylem.df$Core.ID <- paste(xylem.df$Tag, xylem.df$core, sep="-") # Trying to match things to 
 
+unique(xylem.df$Ring.year)
+hist(xylem.df$Ring.year)
+unique(xylem.df$Tree.ID)
 summary(xylem.df)
 
 

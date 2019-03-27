@@ -174,7 +174,7 @@ summary(ring.stats3)
 
 # # One last check on the tree ring data and then saving it
 # summary(dat.all)
-# write.csv(dat.all, "../data_raw/TreeRingData_XylemCores.csv", row.names=F)
+write.csv(ring.stats3, "../data_raw/TreeRingData_XylemCores.csv", row.names=F)
 # ---------------------------------------------
 
 

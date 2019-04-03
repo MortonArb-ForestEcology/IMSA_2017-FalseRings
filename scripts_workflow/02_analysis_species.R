@@ -14,6 +14,22 @@ ggplot(data=ring.stats) +
   facet_grid(Species~.) +
   geom_histogram(aes(x=Area.Cond.Tot, fill=Species))
 
+
+ggplot(data=ring.stats) +
+  geom_boxplot(aes(x=Species, y=Area.Cond.Tot, fill=Species)) +
+  theme_bw() +
+  theme(legend.position = "top")
+
+ggplot(data=ring.stats) +
+  geom_boxplot(aes(x=Species, y=Vessel.Density, fill=Species)) +
+  theme_bw() +
+  theme(legend.position = "top")
+
+ggplot(data=ring.stats) +
+  geom_boxplot(aes(x=Species, y=Vessel.Area, fill=Species)) +
+  theme_bw() +
+  theme(legend.position = "top")
+
 # Comparing Total conductive area across species
 # Testing for differences in year; no difference, but we need to keep the year effect so our data is accounted for properly
 mod.tca.rml <- lme(Area.Cond.Tot ~ Species, data=ring.stats, random=list(IMLS_Plot=~1, Core.ID=~1, year=~1), method="REML")

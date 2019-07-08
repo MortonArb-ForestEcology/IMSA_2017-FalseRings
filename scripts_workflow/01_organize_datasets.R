@@ -42,14 +42,14 @@ xylem.df <- xylem.df[!is.na(xylem.df$Vessel.ID) & !is.na(xylem.df$Vessel.Length)
 
 # We're also going to re-calculate Total Vessel & Ring area based on the characteristics
 xylem.df$Vessel.Area <- pi*(apply(xylem.df[,c("Vessel.Length", "Vessel.Width")], 1, mean)/2)^2
-xylem.df <- xylem.df[,c("Species", "Core.ID", "Tag", "core", "Year", "Vessel.ID", "Vessel.Length", "Vessel.Width", "Vessel.Area", "EW.Area")]
+xylem.df <- xylem.df[,c("Species", "Core.ID", "Tag", "core", "year", "Vessel.ID", "Vessel.Length", "Vessel.Width", "Vessel.Area", "EW.Area")]
 summary(xylem.df)
 
 # Looping through and putting the EW Area in every cell
 for(CORE in unique(xylem.df$Core.ID)){
   xylem.df[xylem.df$Core.ID==CORE, "EW.Area"] <- mean(xylem.df[xylem.df$Core.ID==CORE, "EW.Area"], na.rm=T)
 }
-xylem.df$Vessel.Area
+# xylem.df$Vessel.Area
 summary(xylem.df)
 
 # Getting some ring-level stats to make our lives a bit easier

@@ -3,3 +3,5 @@
 .history
 
 .Rhistory
+data_raw/.RData
+scripts_workflow/.RData

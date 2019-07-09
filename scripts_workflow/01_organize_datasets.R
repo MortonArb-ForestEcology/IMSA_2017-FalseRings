@@ -182,23 +182,23 @@ write.csv(ring.stats3, "../data_raw/TreeRingData_XylemCores.csv", row.names=F)
 # ---------------------------------------------
 # Making & saving some exploratory graphs
 # ---------------------------------------------
-path.google <- "/Volumes/GoogleDrive/My Drive/IMSA_SIR/2017_FalseRings_Oros_Ye/SIR 2018-19/" # Defining where I want to put figures
-dir.create(file.path(path.google, "Figures/Figures_Christy")) # Creating a new directory from R
+path.figs <- "/Volumes/GoogleDrive/My Drive/OakVessels_Oros/Figures/" # Defining where I want to put figures
+# dir.create(file.path(path.google, "Figures/Figures_Christy")) # Creating a new directory from R
 
-png(file.path(path.google, "Figures/Figures_Christy", "VesselArea_Mean_byYear.png"), height=6, width=6, units="in", res=120)
-ggplot(data=ring.stats3[ring.stats3$year %in% 1980:1985,]) +
+png(file.path(path.figs, "VesselArea_Mean_byYear.png"), height=6, width=6, units="in", res=120)
+ggplot(data=ring.stats3[ring.stats3$year>=1980,]) +
   facet_wrap(~year) +
   geom_boxplot(aes(x=Species, y=Vessel.Area, fill=Species))
 dev.off()
 
-png(file.path(path.google, "Figures_Christy", "EarlywoodArea_Total_byYear.png"), height=6, width=6, units="in", res=120)
-ggplot(data=ring.stats3[ring.stats3$year %in% 1980:1985,]) +
+png(file.path(path.figs, "EarlywoodArea_Total_byYear.png"), height=6, width=6, units="in", res=120)
+ggplot(data=ring.stats3[ring.stats3$year>=1980,]) +
   facet_wrap(~year) +
   geom_boxplot(aes(x=Species, y=bai.earlywood, fill=Species))
 dev.off()
 
-png(file.path(path.google, "Figures_Christy", "VesselArea_Total_byYear.png"), height=6, width=6, units="in", res=120)
-ggplot(data=ring.stats3[ring.stats3$year %in% 1980:1985,]) +
+png(file.path(path.figs, "VesselArea_Total_byYear.png"), height=6, width=6, units="in", res=120)
+ggplot(data=ring.stats3[ring.stats3$year>=1980,]) +
   facet_wrap(~year) +
   geom_boxplot(aes(x=Species, y=Area.Cond.Tot, fill=Species))
 dev.off()

@@ -103,6 +103,11 @@ for(SPP in unique(dat.all$Species)){
       # dat.tmp$PRED <- dat.tmp[,VAR]
       dat.tmp$PRED <- dat.tmp[,paste0(VAR, ".wk")]
       
+      if(VAR=="prcp.mm"){
+        dat.tmp$PRED[dat.tmp$PRED==0] <- 1e-3
+        dat.tmp$PRED <- log(dat.tmp$PRED)
+      } 
+      
       for(RESP in vars.resp){
         # Update our Progress bar
         setTxtProgressBar(pb, pb.ind)
@@ -110,13 +115,9 @@ for(SPP in unique(dat.all$Species)){
         
         # Set up the response variable for our model to make it generalzied
         dat.tmp$RESP <- dat.tmp[,RESP]
-        if(RESP=="prcp.mm"){
-          dat.tmp$RESP[dat.tmp$RESP==0] <- 1e-3
-          dat.tmp$RESP <- log(dat.tmp$RESP)
-        } 
-        
+
         # Run a simple mixed-effect model & save the summary so we can get the t-table
-        mod.var <- lme(RESP ~ PRED, random=list(IMLS_Plot=~1, Core.ID=~1), data=dat.tmp[,], na.action=na.omit)
+        mod.var <- lme(RESP ~ PRED, random=list(IMLS_Plot=~1, year=~1, Core.ID=~1), data=dat.tmp[,], na.action=na.omit)
         mod.sum <- summary(mod.var)
         
         # Save our t-stat & pvalue for the climate predictor
@@ -150,9 +151,27 @@ ggplot(data=mod.out) +
   geom_vline(xintercept = 0, linetype="dashed") +
   scale_y_discrete(name="Response Variable", expand=c(0,0)) +
   scale_x_continuous(name="Day of Year (julian)", expand=c(0,0)) +
-  scale_fill_gradientn(name="t-stat", colors=rev(RdBu5.b), limits=max(mod.out$t.stat)*c(-1,1))+
+  scale_fill_gradientn(name="t-stat", colors=PRGn5, limits=max(mod.out$t.stat)*c(-1,1))+
   theme()
 dev.off()
+
+
+png(file.path(path.figs, "ClimateEffects_daily_smooth07day_t-stat_sig_poster.png"), height=5, width=15, units="in", res=180)
+dat.sub <- mod.out$resp %in% c("Area.Cond.Tot", "Vessel.Area", "Vessel.Density") &
+  mod.out$pred %in% c("prcp.mm", "tmax.C", "vp.Pa")
+ggplot(data=mod.out[dat.sub, ]) +
+  facet_grid(resp~pred) +
+  geom_tile(data=mod.out[dat.sub & mod.out$p.val>=0.05,], aes(x=yday, y=species), fill="gray50") +
+  geom_tile(data=mod.out[dat.sub & mod.out$p.val<0.05,], aes(x=yday, y=species, fill=t.stat)) +
+  # geom_tile(aes(x=yday, y=resp, fill=t.stat)) +
+  geom_vline(xintercept = 0, linetype="dashed") +
+  scale_y_discrete(name="Response Variable", expand=c(0,0)) +
+  scale_x_continuous(name="Day of Year (julian)", expand=c(0,0)) +
+  scale_fill_gradientn(name="t-stat\n(sig. only)", colors=PRGn5, limits=max(mod.out$t.stat)*c(-1,1))+
+  theme(legend.position="top",
+        legend.title=element_text(hjust=1)) 
+dev.off()
+
 
 png(file.path(path.figs, "ClimateEffects_daily_smooth07day_r-val_all.png"), height=11, width=8, units="in", res=180)
 ggplot(data=mod.out) +
@@ -163,7 +182,7 @@ ggplot(data=mod.out) +
   geom_vline(xintercept = 0, linetype="dashed") +
   scale_y_discrete(name="Response Variable", expand=c(0,0)) +
   scale_x_continuous(name="Day of Year (julian)", expand=c(0,0)) +
-  scale_fill_gradientn(name="Marginal\nR-value", colors=rev(RdBu5.b), limits=max(sqrt(mod.out$r.sq.m))*c(-1,1))+
+  scale_fill_gradientn(name="Marginal\nR-value", colors=PRGn5, limits=max(sqrt(mod.out$r.sq.m))*c(-1,1))+
   theme()
 dev.off()
 # ---------------------------

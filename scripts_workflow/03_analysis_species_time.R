@@ -131,12 +131,15 @@ for(SPP in unique(dat.all$Species)){
 }
 summary(mod.out)
 summary(mod.out[mod.out$species=="Q. rubra",])
+
+write.csv(mod.out, file.path(path.figs, "ClimateCorrs_Daily.csv"), row.names=F)
 # ---------------------------
 
 # ---------------------------
 # Graphing results
 # ---------------------------
 library(ggplot2)
+mod.out <- read.csv(file.path(path.figs, "ClimateCorrs_Daily.csv"))
 
 RdBu5 <- c("#ca0020", "#f4a582", "#f7f7f7", "#92c5de", "#0571b0")
 RdBu5.b <- c("#ca0020", "#f4a582", "gray50", "#92c5de", "#0571b0")

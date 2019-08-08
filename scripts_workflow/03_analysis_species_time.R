@@ -140,10 +140,42 @@ write.csv(mod.out, file.path(path.figs, "ClimateCorrs_Daily.csv"), row.names=F)
 # ---------------------------
 library(ggplot2)
 mod.out <- read.csv(file.path(path.figs, "ClimateCorrs_Daily.csv"))
+mod.out$pred <- car::recode(mod.out$pred, "'prcp.mm'='Precipitation'; 'tmax.C'='Max Temperature'; 'tmin.C'='Min Temperature'; 'vp.Pa'='Vapor Pressure Deficit'; 'srad.Wm2'='Shortwave Radiation'")
+mod.out$resp <- car::recode(mod.out$resp, "'Area.Cond.Tot'='Tot. Cond. Area'; 'bai.earlywood'='Earlywood BAI'; 'bai.latewood'='Latewood BAI'; 'Vessel.Area'='Mean Vessel Area'; 'Vessel.Density'='Vessel Density'")
+summary(mod.out)
+
+mod.out$pred <- factor(mod.out$pred, levels=c("Min Temperature", "Max Temperature", "Precipitation", "Vapor Pressure Deficit", "Shortwave Radiation"))
+mod.out$resp <- factor(mod.out$resp, levels=c("Latewood BAI", "Earlywood BAI", "Tot. Cond. Area", "Mean Vessel Area", "Vessel Density"))
+
+yrs.mark <- data.frame(Label=c("p.Oct 1", "Jan 1", "Apr 1", "Jul 1", "Oct 1"), 
+                       Date=c("2018-10-01", "2019-01-01", "2019-04-01", "2019-07-01", "2019-10-01"))
+yrs.mark$mark.yday <- lubridate::yday(yrs.mark$Date)
+yrs.mark$mark.yday[1] <- yrs.mark$mark.yday[1]-365
 
 RdBu5 <- c("#ca0020", "#f4a582", "#f7f7f7", "#92c5de", "#0571b0")
 RdBu5.b <- c("#ca0020", "#f4a582", "gray50", "#92c5de", "#0571b0")
 PRGn5 <- c("#7b3294", "#c2a5cf", "gray50", "#a6dba0", "#008837")
+
+png(file.path(path.figs, "ClimateEffects_daily_smooth07day_t-stat_sig_poster.png"), height=5, width=15, units="in", res=180)
+dat.sub <- mod.out$resp %in% c("Tot. Cond. Area", "Mean Vessel Area", "Vessel Density") &
+  mod.out$pred %in% c("Precipitation", "Max Temperature", "vp.Pa")
+ggplot(data=mod.out[dat.sub, ]) +
+  facet_grid(resp~pred) +
+  geom_tile(data=mod.out[dat.sub & mod.out$p.val>=0.05,], aes(x=yday, y=species), fill="gray50") +
+  geom_tile(data=mod.out[dat.sub & mod.out$p.val<0.05,], aes(x=yday, y=species, fill=t.stat)) +
+  # geom_tile(aes(x=yday, y=resp, fill=t.stat)) +
+  geom_vline(xintercept = 0, linetype="dashed") +
+  scale_y_discrete(name="Response Variable", expand=c(0,0)) +
+  scale_x_continuous(name="Day of Year", expand=c(0,0), breaks=yrs.mark$mark.yday, labels = yrs.mark$Label) +
+  scale_fill_gradientn(name="t-stat\n(sig. only)", colors=PRGn5, limits=max(mod.out$t.stat)*c(-1,1))+
+  theme(legend.position="right",
+        legend.title=element_text(hjust=0.5),
+        strip.text.x = element_text(size=rel(1.5), face="bold", color="black"),
+        strip.text.y = element_text(size=rel(1.25), face="bold", color="black"),
+        axis.title = element_text(size=rel(1.5), face="bold", color="black"),
+        axis.text = element_text(size=rel(1.25), color="black")) 
+dev.off()
+
 
 png(file.path(path.figs, "ClimateEffects_daily_smooth07day_t-stat_sig.png"), height=11, width=8, units="in", res=180)
 ggplot(data=mod.out) +
@@ -153,27 +185,11 @@ ggplot(data=mod.out) +
   # geom_tile(aes(x=yday, y=resp, fill=t.stat)) +
   geom_vline(xintercept = 0, linetype="dashed") +
   scale_y_discrete(name="Response Variable", expand=c(0,0)) +
-  scale_x_continuous(name="Day of Year (julian)", expand=c(0,0)) +
+  scale_x_continuous(name="Day of Year", expand=c(0,0), breaks=yrs.mark$mark.yday, labels = yrs.mark$Label) +
   scale_fill_gradientn(name="t-stat", colors=PRGn5, limits=max(mod.out$t.stat)*c(-1,1))+
   theme()
 dev.off()
 
-
-png(file.path(path.figs, "ClimateEffects_daily_smooth07day_t-stat_sig_poster.png"), height=5, width=15, units="in", res=180)
-dat.sub <- mod.out$resp %in% c("Area.Cond.Tot", "Vessel.Area", "Vessel.Density") &
-  mod.out$pred %in% c("prcp.mm", "tmax.C", "vp.Pa")
-ggplot(data=mod.out[dat.sub, ]) +
-  facet_grid(resp~pred) +
-  geom_tile(data=mod.out[dat.sub & mod.out$p.val>=0.05,], aes(x=yday, y=species), fill="gray50") +
-  geom_tile(data=mod.out[dat.sub & mod.out$p.val<0.05,], aes(x=yday, y=species, fill=t.stat)) +
-  # geom_tile(aes(x=yday, y=resp, fill=t.stat)) +
-  geom_vline(xintercept = 0, linetype="dashed") +
-  scale_y_discrete(name="Response Variable", expand=c(0,0)) +
-  scale_x_continuous(name="Day of Year (julian)", expand=c(0,0)) +
-  scale_fill_gradientn(name="t-stat\n(sig. only)", colors=PRGn5, limits=max(mod.out$t.stat)*c(-1,1))+
-  theme(legend.position="top",
-        legend.title=element_text(hjust=1)) 
-dev.off()
 
 
 png(file.path(path.figs, "ClimateEffects_daily_smooth07day_r-val_all.png"), height=11, width=8, units="in", res=180)

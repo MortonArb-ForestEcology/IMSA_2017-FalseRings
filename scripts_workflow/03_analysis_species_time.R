@@ -9,12 +9,51 @@ path.figs <- "/Volumes/GoogleDrive/My Drive/OakVessels_Oros/Figures/"
 ring.stats <- read.csv("../data_raw/TreeRingData_XylemCores.csv")
 ring.stats <- ring.stats[ring.stats$year>=1980,]
 ring.stats$Species <- car::recode(ring.stats$Species, "'QURU'='Q. rubra'; 'QUAL'='Q. alba'")
+ring.stats <- ring.stats[ring.stats$Canopy!="I",]
 summary(ring.stats)
 
 
 # ---------------------------
 # Comparing interannual variability of different ring traits
 # ---------------------------
+# Making an exploratory figure
+ring.stats.stack <- stack(ring.stats[,c("Vessel.Area", "Vessel.Density", "Area.Cond.Tot", "bai.latewood", "bai.earlywood")])
+ring.stats.stack[,c("Tag", "Sp_code", "Species", "year")] <- ring.stats[,c("Tag", "Sp_code", "Species", "year")]
+summary(ring.stats.stack)
+
+ring.stats.agg <- aggregate(ring.stats.stack[,"values"],
+                            by=ring.stats.stack[,c("Sp_code", "Species", "year", "ind")],
+                            FUN=mean)
+names(ring.stats.agg)[names(ring.stats.agg)=="x"] <- "value.mean"
+ring.stats.agg$value.sd <- aggregate(ring.stats.stack[,"values"],
+                                     by=ring.stats.stack[,c("Sp_code", "Species", "year", "ind")],
+                                     FUN=sd)$x
+ring.stats.agg$value.LB <- aggregate(ring.stats.stack[,"values"],
+                                     by=ring.stats.stack[,c("Sp_code", "Species", "year", "ind")],
+                                     FUN=quantile, 0.025)$x
+ring.stats.agg$value.UB <- aggregate(ring.stats.stack[,"values"],
+                                     by=ring.stats.stack[,c("Sp_code", "Species", "year", "ind")],
+                                     FUN=quantile, 0.975)$x
+ring.stats.agg$Sp_code <- factor(ring.stats.agg$Sp_code, levels=c("QUAL", "QURU"))
+ring.stats.agg$ind <- factor(ring.stats.agg$ind, levels=c( "Vessel.Density", "Vessel.Area", "Area.Cond.Tot", "bai.earlywood", "bai.latewood"))
+summary(ring.stats.agg)
+
+png(file.path(path.figs, "TimeSeries.png"), height=6, width=6, units="in", res=180)
+ggplot(data=ring.stats.agg) +
+  facet_grid(ind ~ ., scales="free_y") +
+  # geom_ribbon(aes(x=year, ymin=value.mean - value.sd, ymax=value.mean + value.sd, fill=Sp_code), alpha=0.5) +
+  geom_ribbon(aes(x=year, ymin=value.LB, ymax=value.UB, fill=Species), alpha=0.5) +
+  geom_line(aes(x=year, y=value.mean, color=Species), size=1.5) +
+  scale_color_manual(name="Species", values=c("darkslategray4", "coral3")) +
+  scale_fill_manual(name="Species", values=c("darkslategray4", "coral3")) +
+  scale_x_continuous(expand=c(0,0)) +
+  theme_bw() +
+  theme(panel.grid = element_blank(),
+        legend.position="top",
+        legend.text = element_text(face="italic"))
+dev.off()
+
+
 # Looking at interannual variability in vessel density
 mod.vd.t <- lme(Vessel.Density ~ Species*as.factor(year), data=ring.stats, random=list(IMLS_Plot=~1, Core.ID=~1), method="ML")
 # summary(mod.vd.t) # this is a mess; don't look at it
